@@ -3,8 +3,8 @@ import cardAPI from 'services/card-api';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
-import { Modal } from './Modal/Modal';
-// import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
+import Loader from './Loader/Loader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import s from './App.module.css';
@@ -33,12 +33,19 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    // setImages([]);
+    // setPage(1);
     // setStatus('pending');
+    if (searchCard === '') {
+      return;
+    }
 
     cardAPI
       .fetchCard(searchCard, page)
       .then(
         ({ hits, totalHits }) => {
+          // setImages(hits);
+
           setImages(prevState => [...prevState, ...hits]);
           setTotalHit(totalHits);
           setStatus('resolved');
@@ -85,6 +92,9 @@ export default function App() {
 
     // this.setState({ status: 'pending' });
     setStatus('pending');
+    // setImages(prevState => [...prevState, ...images]);
+    // setImages(images);
+    // console.log(setImages(prevState => [...prevState, ...images]));
     setPage(prevState => prevState + 1);
 
     // cardAPI
@@ -112,7 +122,11 @@ export default function App() {
   };
 
   const handleFormSubmit = search => {
+    setImages([]);
     setSearchCard(search);
+    // setImages(images);
+    setPage(1);
+
     // this.setState({ search });
   };
 
@@ -131,7 +145,7 @@ export default function App() {
         <ImageGallery onClick={toggleModal} images={images} />
       )}
 
-      {/* {status === 'pending' && (<Loader />)} */}
+      {status === 'pending' && <Loader />}
 
       {totalHit > images.length && <Button loadMore={onLoadMore} />}
 
