@@ -4,14 +4,10 @@ import { toast } from 'react-toastify';
 import s from './Searchbar.module.css';
 
 export default function Searchbar({ onSubmit }) {
-  // state = {
-  //   searchCard: '',
-  // }
   const [searchCard, setSearchCard] = useState('');
 
   const handleCardChange = event => {
     setSearchCard(event.currentTarget.value.toLowerCase());
-    // this.setState({ searchCard: event.currentTarget.value.toLowerCase() });
   };
 
   const handleSubmit = event => {
@@ -23,7 +19,6 @@ export default function Searchbar({ onSubmit }) {
 
     onSubmit(searchCard);
 
-    // this.setState({ searchCard: '' });
     setSearchCard('');
   };
 

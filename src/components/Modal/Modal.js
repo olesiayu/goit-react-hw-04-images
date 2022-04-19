@@ -20,27 +20,11 @@ export default function Modal({ largeImageURL, tags, onClose }) {
     };
   });
 
-  //   componentDidMount() {
-  //     window.addEventListener('keydown', this.handleKeyDown)
-  //   }
-
-  //   componentWillUnmount() {
-  // window.removeEventListener('keydown', this.handleKeyDown)
-  //   }
-
-  // const handleKeyDown = e => {
-  //   if (e.code === 'Escape') {
-  //     onClose();
-  //   }
-  // };
-
   const handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
       onClose();
     }
   };
-
-  // const { largeImageURL, tags } = this.props;
 
   return createPortal(
     <div className={s.overlay} onClick={handleBackdropClick}>

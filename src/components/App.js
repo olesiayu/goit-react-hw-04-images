@@ -10,18 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import s from './App.module.css';
 
 export default function App() {
-  // state = {
-  //   searchCard: '',
-  //   images: [],
-  //   largeImageURL: '',
-  //   tags: '',
-  //   error: null,
-  //   status: 'idle',
-  //   page: 1,
-  //   totalHits: null,
-  //   showModal: false,
-  // };
-
   const [searchCard, setSearchCard] = useState('');
   const [images, setImages] = useState([]);
   const [largeImageURL, setLargeImageURL] = useState('');
@@ -33,105 +21,49 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    // setImages([]);
-    // setPage(1);
-    // setStatus('pending');
     if (searchCard === '') {
       return;
     }
 
+    setStatus('pending');
+
     cardAPI
       .fetchCard(searchCard, page)
-      .then(
-        ({ hits, totalHits }) => {
-          // setImages(hits);
-
-          setImages(prevState => [...prevState, ...hits]);
-          setTotalHit(totalHits);
-          setStatus('resolved');
-        }
-        // this.setState({ images: hits, totalHits, status: 'resolved' })
-      )
-      // .catch(error => this.setState({ error, status: 'rejected' }));
+      .then(({ hits, totalHits }) => {
+        setImages(prevState => [...prevState, ...hits]);
+        setTotalHit(totalHits);
+        setStatus('resolved');
+      })
       .catch(error => {
         setError(error);
         setStatus('rejected');
       });
 
     if (totalHit === 0) {
-      return toast.error(
-        'Sorry, there are no images matching your search query. Please try again'
-      );
+      return () => {
+        toast.error(
+          'Sorry, there are no images matching your search query. Please try again'
+        );
+      };
     }
   }, [searchCard, page]);
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const prevCard = prevState.searchCard;
-  //   const nextCard = this.state.searchCard;
-
-  //   if (prevCard !== nextCard) {
-  //     this.setState({ status: 'pending', page: 1 });
-
-  //     cardAPI
-  //       .fetchCard(nextCard)
-  //       .then(({ hits, totalHits }) =>
-  //         this.setState({ images: hits, totalHits, status: 'resolved' })
-  //       )
-  //       .catch(error => this.setState({ error, status: 'rejected' }));
-  //   } else if (this.state.totalHits === 0) {
-  //     return toast.error(
-  //       'Sorry, there are no images matching your search query. Please try again'
-  //     );
-  //   }
-  // }
-
   const onLoadMore = () => {
-    // const { page, searchCard } = this.state;
-    // const nextPage = page + 1;
-    // const nextPage = setPage(prevState => prevState + 1);
-
-    // this.setState({ status: 'pending' });
     setStatus('pending');
-    // setImages(prevState => [...prevState, ...images]);
-    // setImages(images);
-    // console.log(setImages(prevState => [...prevState, ...images]));
     setPage(prevState => prevState + 1);
-
-    // cardAPI
-    //   .fetchCard(searchCard, nextPage)
-    //   .then(({ hits }) =>
-    //     this.setState(prevState => ({
-    //       images: [...prevState.images, ...hits],
-    //       page: nextPage,
-    //       status: 'resolved',
-    //     }))
-    //   )
-    //   .catch(error => this.setState({ error, status: 'rejected' }));
   };
 
   const toggleModal = (largeImage, tag) => {
     setShowModal(!showModal);
     setLargeImageURL(largeImage);
     setTags(tag);
-
-    // this.setState(({ showModal }) => ({
-    //   showModal: !showModal,
-    //   largeImageURL,
-    //   tags,
-    // }));
   };
 
   const handleFormSubmit = search => {
     setImages([]);
     setSearchCard(search);
-    // setImages(images);
     setPage(1);
-
-    // this.setState({ search });
   };
-
-  // const { images, error, status, totalHits, showModal, largeImageURL, tags } =
-  //   this.state;
 
   return (
     <div className={s.app}>
@@ -147,7 +79,9 @@ export default function App() {
 
       {status === 'pending' && <Loader />}
 
-      {totalHit > images.length && <Button loadMore={onLoadMore} />}
+      {totalHit > images.length && status === 'resolved' && (
+        <Button loadMore={onLoadMore} />
+      )}
 
       {showModal && (
         <Modal
